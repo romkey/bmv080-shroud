@@ -1,0 +1,30 @@
+name: OpenSCAD
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  render:
+    name: Render and check STLs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install OpenSCAD
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends openscad
+          openscad --version
+
+      - name: Render all variants
+        run: ./ci-check.sh
+
+      - name: Upload STLs
+        uses: actions/upload-artifact@v4
+        with:
+          name: bmv080-shroud-stl
+          path: |
+            build/screw.stl
+            build/peg.stl
